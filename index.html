@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sanskrit Quest • Class VI</title>
+<style>
+  :root{
+    --bg:#f6f7fb; --card:#fff; --ink:#172033; --muted:#667085;
+    --primary:#635bff; --secondary:#14b8a6; --gold:#f5b942; --danger:#ef6a6a;
+    --border:#e8eaf0; --shadow:0 8px 28px rgba(22,30,50,.08);
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;background:var(--bg);color:var(--ink)}
+  button{font:inherit;cursor:pointer}
+  .app{max-width:1100px;margin:auto;padding:22px}
+  header{background:linear-gradient(135deg,#635bff,#827bff);color:white;border-radius:24px;padding:24px;box-shadow:var(--shadow)}
+  .top{display:flex;justify-content:space-between;gap:18px;align-items:center}
+  h1{margin:0;font-size:30px}.subtitle{opacity:.88;margin-top:5px}
+  .stats{display:flex;gap:10px;flex-wrap:wrap}
+  .pill{background:rgba(255,255,255,.18);padding:9px 13px;border-radius:999px;font-weight:700}
+  .progress{height:9px;background:rgba(255,255,255,.25);border-radius:99px;margin-top:20px;overflow:hidden}
+  .progress>div{height:100%;background:white;width:0%;transition:.35s}
+  nav{display:flex;gap:8px;overflow:auto;padding:16px 0}
+  nav button{border:1px solid var(--border);background:white;padding:10px 14px;border-radius:12px;color:var(--ink);white-space:nowrap}
+  nav button.active{background:var(--primary);color:white;border-color:var(--primary)}
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:20px;box-shadow:var(--shadow)}
+  .module{position:relative;min-height:180px;display:flex;flex-direction:column;justify-content:space-between}
+  .module .icon{font-size:34px}.module h3{margin:10px 0 5px}.module p{margin:0;color:var(--muted);font-size:14px}
+  .tag{display:inline-block;background:#f0efff;color:#4e47c8;border-radius:8px;padding:4px 8px;font-size:12px;font-weight:800}
+  .btn{border:0;border-radius:12px;padding:11px 15px;background:var(--primary);color:#fff;font-weight:800}
+  .btn.secondary{background:#eefbf8;color:#087e72}.btn.ghost{background:#f1f2f6;color:var(--ink)}
+  .view{display:none}.view.active{display:block}
+  .lesson-head{display:flex;justify-content:space-between;align-items:flex-start;gap:15px;margin-bottom:16px}
+  .lesson-head h2{margin:0 0 5px}.lesson-head p{margin:0;color:var(--muted)}
+  .learn-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+  .flash{min-height:145px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+  .sanskrit{font-size:36px;font-weight:800}.meaning{color:var(--muted);margin-top:7px}
+  .speak{margin-top:10px}
+  .quiz{max-width:760px;margin:auto}
+  .question{font-size:23px;font-weight:800;margin:10px 0 18px}
+  .options{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .option{background:white;border:2px solid var(--border);padding:15px;border-radius:14px;text-align:left;font-weight:700}
+  .option:hover{border-color:var(--primary)} .option.correct{border-color:#19a974;background:#eafaf3}.option.wrong{border-color:#ef6a6a;background:#fff0f0}
+  .feedback{margin-top:15px;padding:13px;border-radius:12px;display:none}.feedback.show{display:block}
+  .feedback.ok{background:#eafaf3;color:#08734f}.feedback.no{background:#fff0f0;color:#a73d3d}
+  .scorebox{text-align:center;padding:18px}.bigscore{font-size:48px;font-weight:900;color:var(--primary)}
+  .table-wrap{overflow:auto}.grammar{width:100%;border-collapse:collapse}.grammar th,.grammar td{padding:10px;border-bottom:1px solid var(--border);text-align:center}.grammar th{background:#f7f7fb}
+  .badges{display:flex;gap:12px;flex-wrap:wrap}.badge{padding:14px;border:1px solid var(--border);border-radius:15px;text-align:center;background:white;min-width:120px}.badge .emoji{font-size:28px}
+  .footer{text-align:center;color:var(--muted);font-size:13px;padding:30px 0 10px}
+  @media(max-width:800px){.grid,.learn-grid{grid-template-columns:1fr 1fr}.top{flex-direction:column;align-items:flex-start}}
+  @media(max-width:560px){.app{padding:12px}.grid,.learn-grid,.options{grid-template-columns:1fr}.stats{width:100%}h1{font-size:25px}}
+</style>
+</head>
+<body>
+<div class="app">
+<header>
+  <div class="top">
+    <div><h1>🚀 Sanskrit Quest</h1><div class="subtitle">Class VI • Learn Sanskrit through small challenges</div></div>
+    <div class="stats"><div class="pill">⭐ <span id="xp">0</span> XP</div><div class="pill">🏆 Level <span id="level">1</span></div><div class="pill">🔥 <span id="streak">0</span></div></div>
+  </div>
+  <div class="progress"><div id="overallProgress"></div></div>
+</header>
+
+<nav>
+  <button class="active" data-view="home">🏠 Home</button>
+  <button data-view="learn">📚 Learn</button>
+  <button data-view="quiz">🎯 Quiz</button>
+  <button data-view="reference">📖 Quick Reference</button>
+  <button data-view="badges">🏅 Badges</button>
+</nav>
+
+<section id="home" class="view active">
+  <div class="lesson-head"><div><h2>Your Sanskrit Journey</h2><p>Built around the supplied Class VI weekly-test syllabus.</p></div><span class="tag">TEST • 2 Sep 2026</span></div>
+  <div class="grid" id="modules"></div>
+</section>
+
+<section id="learn" class="view">
+  <div class="lesson-head"><div><h2 id="learnTitle">Learn</h2><p id="learnDesc">Pick a topic and practise.</p></div><button type="button" class="btn" onclick="startQuiz()">Start Challenge →</button></div>
+  <div class="learn-grid" id="cards"></div>
+</section>
+
+<section id="quiz" class="view">
+  <div class="quiz">
+    <div class="card">
+      <div class="lesson-head"><div><span class="tag" id="quizTag">CHALLENGE</span><h2 id="quizTitle">Sanskrit Challenge</h2></div><b id="qCount">1 / 5</b></div>
+      <div class="question" id="question"></div>
+      <div class="options" id="options"></div>
+      <div class="feedback" id="feedback"></div>
+      <div style="margin-top:18px;text-align:right"><button class="btn" id="nextBtn" style="display:none" onclick="nextQuestion()">Next →</button></div>
+    </div>
+  </div>
+</section>
+
+<section id="reference" class="view">
+  <div class="lesson-head"><div><h2>📖 Quick Reference</h2><p>Useful patterns from the syllabus. Humans invented tables because apparently memory needed spreadsheets.</p></div></div>
+  <div class="card" style="margin-bottom:15px">
+    <h3>एतत् / तत् / किम् — प्रथमाविभक्तिः</h3>
+    <div class="table-wrap"><table class="grammar">
+      <tr><th></th><th>पुल्लिङ्ग</th><th>स्त्रीलिङ्ग</th><th>नपुंसकलिङ्ग</th></tr>
+      <tr><th>Singular</th><td>सः / एषः / कः</td><td>सा / एषा / का</td><td>तत् / एतत् / किम्</td></tr>
+      <tr><th>Plural</th><td>ते / एते / के</td><td>ताः / एताः / काः</td><td>तानि / एतानि / कानि</td></tr>
+    </table></div>
+  </div>
+  <div class="card" style="margin-bottom:15px">
+    <h3>देवः and लता — प्रथमाविभक्तिः</h3>
+    <div class="table-wrap"><table class="grammar">
+      <tr><th>Number</th><th>देव (m.)</th><th>लता (f.)</th></tr>
+      <tr><td>एकवचनम्</td><td>देवः</td><td>लता</td></tr>
+      <tr><td>द्विवचनम्</td><td>देवौ</td><td>लते</td></tr>
+      <tr><td>बहुवचनम्</td><td>देवाः</td><td>लताः</td></tr>
+    </table></div>
+  </div>
+  <div class="card">
+    <h3>खेल् — लट् लकारः</h3>
+    <div class="table-wrap"><table class="grammar">
+      <tr><th>Person</th><th>Singular</th><th>Dual</th><th>Plural</th></tr>
+      <tr><td>प्रथम पुरुष</td><td>खेलति</td><td>खेलतः</td><td>खेलन्ति</td></tr>
+      <tr><td>मध्यम पुरुष</td><td>खेलसि</td><td>खेलथः</td><td>खेलथ</td></tr>
+      <tr><td>उत्तम पुरुष</td><td>खेलामि</td><td>खेलावः</td><td>खेलामः</td></tr>
+    </table></div>
+  </div>
+</section>
+
+<section id="badges" class="view">
+  <div class="lesson-head"><div><h2>🏅 Your Badges</h2><p>Earn them by learning and completing challenges.</p></div></div>
+  <div class="badges" id="badgeList"></div>
+</section>
+
+<div class="footer">Sanskrit Quest • Practice app for the supplied Class VI syllabus • Progress is saved in this browser.<br><button type="button" class="btn ghost" style="margin-top:10px" onclick="resetProgress()">Reset Progress</button></div>
+</div>
+
+<script>
+const modules = [
+ {id:'varnamala',icon:'🔤',title:'वर्णमाला',en:'Varnamala',desc:'Letters, vowels, consonants & संयुक्त व्यञ्जनानि',cards:[
+  ['अ','a','Vowel'],['आ','ā','Vowel'],['इ','i','Vowel'],['ई','ī','Vowel'],['उ','u','Vowel'],['ऊ','ū','Vowel'],['क','ka','Consonant'],['ख','kha','Consonant'],['ग','ga','Consonant'],['च','ca','Consonant'],['त','ta','Consonant'],['म','ma','Consonant'],['क्ष','kṣa','Conjunct'],['त्र','tra','Conjunct'],['ज्ञ','jña','Conjunct']
+ ],questions:[
+  ['Which is a vowel?',['क','त','अ','म'],'अ'],
+  ['Which is a संयुक्त व्यञ्जनम्?',['क','म','क्ष','त'],'क्ष'],
+  ['Which sound is usually represented by “म”?',['ma','ka','ta','sa'],'ma']
+ ]},
+ {id:'words',icon:'👀',title:'एषः • एषा • एतत्',en:'Point & Identify',desc:'Learn how Sanskrit points to masculine, feminine and neuter things.',cards:[
+  ['एषः','this (masculine)','Pronoun'],['एषा','this (feminine)','Pronoun'],['एतत्','this (neuter)','Pronoun'],['कः','who? (masculine)','Question'],['का','who? (feminine)','Question'],['किम्','what? (neuter)','Question'],['सः','that (masculine)','Pronoun'],['सा','that (feminine)','Pronoun'],['तत्','that (neuter)','Pronoun']
+ ],questions:[
+  ['“एषा” is used with which gender?',['Masculine','Feminine','Neuter','All three'],'Feminine'],
+  ['Choose the neuter form:',['एषः','एषा','एतत्','कः'],'एतत्'],
+  ['“कः” means…',['what? (neuter)','who? (masculine)','who? (feminine)','this'],'who? (masculine)']
+ ]},
+ {id:'grammar',icon:'🧩',title:'कर्तृ • क्रियापदानि',en:'Grammar Detective',desc:'Find who is doing the action and identify the verb.',cards:[
+  ['रामः','Rama (doer)','कर्ता'],['पठति','reads / studies','क्रियापदम्'],['बालकः','boy (doer)','कर्ता'],['खेलति','plays','क्रियापदम्'],['सीता','Sita (doer)','कर्ता'],['गच्छति','goes','क्रियापदम्']
+ ],questions:[
+  ['In “रामः पठति”, what is the क्रियापदम्?',['रामः','पठति','राम','None'],'पठति'],
+  ['In “बालकः खेलति”, who is the कर्ता?',['खेलति','बालकः','Both','None'],'बालकः'],
+  ['Which word is a verb?',['सीता','पुस्तकम्','गच्छति','बालकः'],'गच्छति']
+ ]},
+ {id:'shabda',icon:'📦',title:'शब्दरूपाणि',en:'Word Forms',desc:'Practise तत्, एतत्, किम् + प्रथमाविभक्ति.',cards:[
+  ['सः','he / that (masc.)','तत्'],['सा','she / that (fem.)','तत्'],['तत्','that (neuter)','तत्'],['एषः','this (masc.)','एतत्'],['एषा','this (fem.)','एतत्'],['एतत्','this (neuter)','एतत्'],['कः','who? (masc.)','किम्'],['का','who? (fem.)','किम्'],['किम्','what? (neuter)','किम्']
+ ],questions:[
+  ['First-person? No. Which is the masculine singular of तत्?',['सः','सा','तत्','ते'],'सः'],
+  ['Which is the feminine singular of एतत्?',['एषः','एषा','एतत्','एते'],'एषा'],
+  ['Which is the neuter singular of किम्?',['कः','का','किम्','के'],'किम्'],
+  ['Which is plural masculine?',['ते','ताः','तानि','सा'],'ते']
+ ]},
+ {id:'devlata',icon:'🌱',title:'देवः • लता',en:'Declension Garden',desc:'First case forms of देव and लता.',cards:[
+  ['देवः','Singular','पुल्लिङ्ग'],['देवौ','Dual','पुल्लिङ्ग'],['देवाः','Plural','पुल्लिङ्ग'],['लता','Singular','स्त्रीलिङ्ग'],['लते','Dual','स्त्रीलिङ्ग'],['लताः','Plural','स्त्रीलिङ्ग']
+ ],questions:[
+  ['Plural of देवः?',['देवौ','देवाः','देव','देवानि'],'देवाः'],
+  ['Dual of लता?',['लता','लते','लताः','लताम्'],'लते'],
+  ['Singular of देव?',['देवः','देवौ','देवाः','देवम्'],'देवः']
+ ]},
+ {id:'dhatu',icon:'🏃',title:'खेल् • लट्',en:'Verb Sprint',desc:'Present-tense forms of खेल्.',cards:[
+  ['खेलति','he/she plays','प्रथम पुरुष • एकवचन'],['खेलतः','they two play','प्रथम पुरुष • द्विवचन'],['खेलन्ति','they play','प्रथम पुरुष • बहुवचन'],['खेलसि','you play','मध्यम पुरुष • एकवचन'],['खेलथः','you two play','मध्यम पुरुष • द्विवचन'],['खेलथ','you all play','मध्यम पुरुष • बहुवचन'],['खेलामि','I play','उत्तम पुरुष • एकवचन'],['खेलावः','we two play','उत्तम पुरुष • द्विवचन'],['खेलामः','we play','उत्तम पुरुष • बहुवचन']
+ ],questions:[
+  ['“खेलति” means…',['I play','you play','he/she plays','they play'],'he/she plays'],
+  ['First person singular is…',['खेलति','खेलसि','खेलामि','खेलन्ति'],'खेलामि'],
+  ['Third person plural is…',['खेलन्ति','खेलथ','खेलामः','खेलतः'],'खेलन्ति'],
+  ['Second person singular is…',['खेलसि','खेलति','खेलामि','खेलथः'],'खेलसि']
+ ]}
+];
+
+let state = JSON.parse(localStorage.getItem('sanskritQuest')||'{"xp":0,"done":[],"streak":0}');
+let currentModule = modules[0], questions=[], qi=0, answered=false;
+
+function save(){localStorage.setItem('sanskritQuest',JSON.stringify(state)); updateStats();}
+function updateStats(){
+  document.getElementById('xp').textContent=state.xp;
+  document.getElementById('level').textContent=Math.floor(state.xp/100)+1;
+  document.getElementById('streak').textContent=state.streak;
+  document.getElementById('overallProgress').style.width=Math.min(100,(state.done.length/modules.length)*100)+'%';
+  renderBadges();
+}
+function show(view){
+ document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));
+ document.getElementById(view).classList.add('active');
+ document.querySelectorAll('nav button').forEach(x=>x.classList.toggle('active',x.dataset.view===view));
+ window.scrollTo({top:0,behavior:'smooth'});
+}
+document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>show(b.dataset.view));
+
+function renderModules(){
+ const el=document.getElementById('modules'); el.innerHTML='';
+ modules.forEach(m=>{
+   const done=state.done.includes(m.id);
+   el.innerHTML+=`<div class="card module">
+    <div><div class="icon">${m.icon}</div><h3>${m.title} ${done?'✅':''}</h3><p>${m.desc}</p></div>
+    <button class="btn" onclick="openModule('${m.id}')">${done?'Review':'Learn'} ${m.en} →</button>
+   </div>`;
+ });
+}
+function openModule(id){
+ currentModule=modules.find(m=>m.id===id);
+ document.getElementById('learnTitle').textContent=currentModule.title+' • '+currentModule.en;
+ document.getElementById('learnDesc').textContent=currentModule.desc;
+ document.getElementById('cards').innerHTML=currentModule.cards.map(c=>`
+   <div class="card flash"><div class="sanskrit">${c[0]}</div><div class="meaning">${c[1]}</div><small class="tag" style="margin-top:10px">${c[2]}</small>
+   <button type="button" class="btn ghost speak" onclick="speak(${JSON.stringify(c[0])})">🔊 Listen</button></div>`).join('');
+ show('learn');
+}
+function escapeHtml(text){
+ return String(text).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
+}
+function speak(text){
+ try{
+   if(!('speechSynthesis' in window)) { alert('Speech is not supported by this browser. Try Chrome, Edge, or Safari.'); return; }
+   speechSynthesis.cancel();
+   const utterance = new SpeechSynthesisUtterance(String(text));
+   utterance.lang = 'hi-IN';
+   utterance.rate = 0.75;
+   utterance.pitch = 1;
+   speechSynthesis.speak(utterance);
+ }catch(e){
+   alert('The browser could not start Sanskrit pronunciation.');
+ }
+}
+
+function startQuiz(){
+ questions=[...currentModule.questions].sort(()=>Math.random()-.5).slice(0,5);
+ qi=0; answered=false; show('quiz'); renderQuestion();
+}
+function renderQuestion(){
+ answered=false;
+ const q=questions[qi];
+ document.getElementById('quizTag').textContent=currentModule.en.toUpperCase();
+ document.getElementById('quizTitle').textContent=currentModule.title;
+ document.getElementById('qCount').textContent=(qi+1)+' / '+questions.length;
+ document.getElementById('question').textContent=q[0];
+ document.getElementById('feedback').className='feedback';
+ document.getElementById('feedback').textContent='';
+ document.getElementById('nextBtn').style.display='none';
+ const opts=[...q[1]].sort(()=>Math.random()-.5);
+ document.getElementById('options').innerHTML=opts.map((o,i)=>`<button class="option" data-index="${i}">${escapeHtml(o)}</button>`).join('');
+ document.querySelectorAll('#options .option').forEach((btn,i)=>{
+   btn.addEventListener('click',()=>answer(btn, opts[i], q[2]));
+ });
+}
+function answer(btn,choice,correct){
+ if(answered)return; answered=true;
+ const ok=choice===correct;
+ btn.classList.add(ok?'correct':'wrong');
+ if(!ok) document.querySelectorAll('.option').forEach(x=>{if(x.textContent===correct)x.classList.add('correct')});
+ const fb=document.getElementById('feedback');
+ fb.textContent=ok?'🎉 Correct! +20 XP':'💡 Not quite. The correct answer is: '+correct;
+ fb.className='feedback show '+(ok?'ok':'no');
+ if(ok){state.xp+=20;state.streak+=1}else state.streak=0;
+ save(); document.getElementById('nextBtn').style.display='inline-block';
+}
+function nextQuestion(){
+ if(qi<questions.length-1){qi++;renderQuestion()}else{
+   if(!state.done.includes(currentModule.id))state.done.push(currentModule.id);
+   state.xp+=20; save(); renderModules();
+   document.getElementById('question').textContent='🏆 Challenge complete!';
+   document.getElementById('options').innerHTML=`<div class="scorebox" style="grid-column:1/-1"><div class="bigscore">+${20 + questions.length*20} XP</div><p>You completed <b>${currentModule.en}</b>.</p><button class="btn" onclick="openModule('${currentModule.id}')">Review Cards</button> <button class="btn secondary" onclick="show('home')">Back Home</button></div>`;
+   document.getElementById('feedback').className='feedback';
+   document.getElementById('nextBtn').style.display='none';
+   document.getElementById('qCount').textContent='Done ✓';
+ }
+}
+function renderBadges(){
+ const defs=[
+  ['🌱','First Steps',state.xp>=20,'Complete your first challenge'],
+  ['🔤','Letter Explorer',state.done.includes('varnamala'),'Finish वर्णमाला'],
+  ['🧩','Grammar Detective',state.done.includes('grammar'),'Finish grammar'],
+  ['📦','Word Master',state.done.includes('shabda'),'Finish शब्दरूपाणि'],
+  ['🏃','Verb Sprinter',state.done.includes('dhatu'),'Finish खेल्'],
+  ['🏆','Sanskrit Star',state.done.length===modules.length,'Complete all topics']
+ ];
+ document.getElementById('badgeList').innerHTML=defs.map(d=>`<div class="badge" style="opacity:${d[2]?1:.4}"><div class="emoji">${d[0]}</div><b>${d[1]}</b><div style="font-size:12px;color:#667085;margin-top:5px">${d[3]}</div></div>`).join('');
+}
+function resetProgress(){
+ if(confirm('Reset all Sanskrit Quest progress?')){
+   state={xp:0,done:[],streak:0};
+   save(); renderModules(); show('home');
+ }
+}
+renderModules();updateStats();
+</script>
+</body>
+</html>
